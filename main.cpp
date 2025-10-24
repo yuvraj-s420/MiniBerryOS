@@ -83,8 +83,6 @@ void setup() {
   );
   Serial.println("systemDataTask initialized");
 
-
-
   xTaskCreatePinnedToCore(
     wifiDataTask,                 // Task function
     "wifiDataTask",               // Task name

@@ -11,7 +11,7 @@ MenuItem main_menu[] = {                    // Main menu items
 };
 
 MenuItem games_menu[] = {                   // Games menu items
-  {"Pong", GAME1},
+  {"Brick Breaker", GAME1},
   {"Game 2", GAME2},
   {"Game 3", GAME3}
 };
@@ -57,8 +57,8 @@ unsigned long now = millis();
 unsigned long before = 0;
 
 // WiFi credentials
-const char *SSID = "Mac House 🗣️";
-const char *PASSWORD = "Sreyoisfat";
+const char *SSID = "YOURSSID";
+const char *PASSWORD = "YOURPASSWORD";
 
 // NTP Server
 const char* ntpServer = "pool.ntp.org";       // Server where we request the time

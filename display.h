@@ -33,6 +33,7 @@ void initGame1(TFT_eSprite *paddle, TFT_eSprite *ball, TFT_eSprite bricks[]);
 
 void updateGame1(TFT_eSprite* paddle, TFT_eSprite* ball, TFT_eSprite bricks[], char res);
 
+
 void drawGame2();
 
 void drawGame3();

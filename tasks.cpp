@@ -357,12 +357,11 @@ void displayTask(void* parameter){
         static char res = ' ';
         static TFT_eSprite paddle(&tft);
         static TFT_eSprite ball(&tft);
-        const int num_bricks = 16;
-        //static TFT_eSprite bricks[]
+        static TFT_eSprite bricks[NUM_BRICKS] = {TFT_eSprite(&tft), TFT_eSprite(&tft), TFT_eSprite(&tft),TFT_eSprite(&tft),TFT_eSprite(&tft),TFT_eSprite(&tft),TFT_eSprite(&tft),TFT_eSprite(&tft)};
 
         if(!menu_init){
           tft.fillRect(0,STATUS_BAR_HEIGHT,SCREEN_WIDTH, SCREEN_HEIGHT - STATUS_BAR_HEIGHT, TFT_BLACK);
-          initGame1(&paddle, &ball, NULL);
+          initGame1(&paddle, &ball, bricks);
           menu_init = true;
         }
 
@@ -373,7 +372,7 @@ void displayTask(void* parameter){
         break;
       }
 
-      case GAME2:                               // Flappy Bird
+      case GAME2:                               // Game 2
 
         if(!menu_init){
           tft.fillRect(0,STATUS_BAR_HEIGHT,SCREEN_WIDTH, SCREEN_HEIGHT - STATUS_BAR_HEIGHT, TFT_BLACK);
@@ -384,7 +383,7 @@ void displayTask(void* parameter){
         handleButtonGame();
         break;
       
-      case GAME3:
+      case GAME3:                               // Game 3
 
         if(!menu_init){
           tft.fillRect(0,STATUS_BAR_HEIGHT,SCREEN_WIDTH, SCREEN_HEIGHT - STATUS_BAR_HEIGHT, TFT_BLACK);

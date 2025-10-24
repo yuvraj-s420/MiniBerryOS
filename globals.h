@@ -82,6 +82,8 @@ TFT_CS                  Connected to GND to always be on
 #define MAIN_MENU_SIZE 5
 #define GAMES_MENU_SIZE 3
 
+#define NUM_BRICKS 8
+
 
 // ============================= Enums =============================
 enum ButtonState {

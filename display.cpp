@@ -304,14 +304,13 @@ void drawImageViewer(){
   
   fs::File file = SD_MMC.open(filenames[file_index], FILE_READ);
 
-  // Allocate around 115kB for the RGB565 240x240 image (alternative is to go row by row to reduce ram usage)
-  uint16_t *imgbuf = new uint16_t[IMAGE_WIDTH * IMAGE_HEIGHT];   
-  file.read((uint8_t *)imgbuf ,IMAGE_WIDTH * IMAGE_HEIGHT * 2);
+  uint16_t row[IMAGE_WIDTH]; // 480 bytes on stack (better than holding 115 kB or allocating from heap)
+
+  for (int y = 0; y < IMAGE_HEIGHT; y++) {           // Display row by row
+      file.read((uint8_t*)row, IMAGE_WIDTH * 2);
+      tft.pushImage(0, STATUS_BAR_HEIGHT + y, IMAGE_WIDTH, 1, row);
+  }
   file.close();
-
-  tft.pushImage(0, STATUS_BAR_HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT, imgbuf);
-
-  delete[] imgbuf;                                               // Delete imgbuf from memory
 
   // Draw option to delete from SD
   static int option_w = SCREEN_WIDTH, option_h = SCREEN_HEIGHT - IMAGE_HEIGHT - STATUS_BAR_HEIGHT;
@@ -422,14 +421,17 @@ void initGame1(TFT_eSprite* paddle, TFT_eSprite* ball, TFT_eSprite bricks[]){
   const int paddle_h = 60;
   const int paddle_w = 10;
   const int ball_r = 7;
-  const int brick_h = 40;
+  const int brick_h = 35;
   const int brick_w = 20;
 
-  static int paddle_x = 0;
-  static int paddle_y = STATUS_BAR_HEIGHT + (SCREEN_HEIGHT - STATUS_BAR_HEIGHT) / 2 - paddle_h / 2;
+  const int paddle_x = 0;
+  const int paddle_y = STATUS_BAR_HEIGHT + (SCREEN_HEIGHT - STATUS_BAR_HEIGHT) / 2 - paddle_h / 2;
 
-  static int ball_x = paddle_x + paddle_w;
-  static int ball_y = paddle_y + paddle_h / 2 - ball_r;
+  const int ball_x = paddle_x + paddle_w;
+  const int ball_y = paddle_y + paddle_h / 2 - ball_r;
+
+  const int brick_x = SCREEN_WIDTH - brick_w;
+  int brick_y = STATUS_BAR_HEIGHT + 10;
 
   // Delete previous sprites 
   paddle->deleteSprite();
@@ -444,6 +446,20 @@ void initGame1(TFT_eSprite* paddle, TFT_eSprite* ball, TFT_eSprite bricks[]){
   ball->createSprite(ball_r * 2, ball_r * 2);
   ball->fillCircle(ball_r, ball_r, ball_r, ball_color);
   ball->pushSprite(ball_x, ball_y);
+
+  // Populate bricks[]
+  for (int i = 0; i < NUM_BRICKS; i++){
+    Serial.println("entered brick loop");
+    bricks[i].createSprite(brick_w, brick_h);
+    
+    Serial.println("created brick sprite");
+
+    bricks[i].fillRect(0,0,brick_w,brick_h,brick_color);
+    bricks[i].drawRect(0,0,brick_w,brick_h,brick_outline);
+    bricks[i].pushSprite(brick_x, brick_y);
+    Serial.println("pushed brick sprite");
+    brick_y += brick_h;
+  }
 }
 
 void updateGame1(TFT_eSprite* paddle, TFT_eSprite* ball, TFT_eSprite bricks[], char res){
@@ -459,11 +475,13 @@ void updateGame1(TFT_eSprite* paddle, TFT_eSprite* ball, TFT_eSprite bricks[], c
   const int paddle_h = 60;
   const int paddle_w = 10;
   const int ball_r = 7;
-  const int brick_h = 30;
-  const int brick_w = 15;
+  const int brick_h = 35;
+  const int brick_w = 20;
 
   static int paddle_x = 0;
   static int paddle_y = STATUS_BAR_HEIGHT + (SCREEN_HEIGHT - STATUS_BAR_HEIGHT) / 2 - paddle_h / 2;
+
+  static bool broken[NUM_BRICKS] = {0};
 
   // Top left of ball
   static int ball_x = paddle_x + paddle_w;
@@ -523,8 +541,8 @@ void updateGame1(TFT_eSprite* paddle, TFT_eSprite* ball, TFT_eSprite bricks[], c
   paddle_hit = checkCollision(paddle_x, paddle_y, paddle_w, paddle_h, ball_x, ball_y, ball_r * 2, ball_r * 2);
 
   // Ball clamping in x and direction reversal upon collision
-  if (ball_x >= SCREEN_WIDTH - 2 * ball_r){     
-    ball_x = SCREEN_WIDTH - 2 * ball_r;
+  if (ball_x >= SCREEN_WIDTH - 2 * ball_r - brick_w){     
+    ball_x = SCREEN_WIDTH - 2 * ball_r - brick_w;
     x_rev = !x_rev;
   } else if (paddle_hit){                     // Collision with paddle
     ball_x = paddle_w;
@@ -548,6 +566,7 @@ void updateGame1(TFT_eSprite* paddle, TFT_eSprite* ball, TFT_eSprite bricks[], c
   paddle->pushSprite(paddle_x, paddle_y);
   ball->pushSprite(ball_x, ball_y);
 }
+
 
 void drawGame2(){
   tft.setTextDatum(MC_DATUM);
