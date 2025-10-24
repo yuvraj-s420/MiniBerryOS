@@ -2,6 +2,7 @@
 Small scale GUI resembling an old BlackBerry phone with apps like camera, files, wifi, system data, and games. Coded in C++ within PlatformIO using FreeRTOS
 
 [![Watch the video](https://img.youtube.com/vi/T4Agt9zRtqI/0.jpg)](https://youtube.com/shorts/T4Agt9zRtqI?feature=share)
+Click to watch demo.
 
 ## Features
 
